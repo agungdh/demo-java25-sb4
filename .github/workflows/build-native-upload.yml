@@ -15,12 +15,25 @@ jobs:
     strategy:
       matrix:
         include:
+          # Linux
           - arch: amd64
-            runner: ubuntu-24.04
+            os: ubuntu-24.04
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            os: ubuntu-24.04-arm
 
-    runs-on: ${{ matrix.runner }}
+          # Windows
+          - arch: amd64
+            os: windows-2025
+          - arch: arm64
+            os: windows-11-arm
+
+          # macOS
+          - arch: amd64
+            os: macos-13
+          - arch: arm64
+            os: macos-15
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout (release tag)

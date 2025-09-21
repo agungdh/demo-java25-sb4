@@ -21,9 +21,9 @@ jobs:
           - arch: arm64
             os: ubuntu-24.04-arm
 
-          # Windows
-          - arch: amd64
-            os: windows-2025
+#          # Windows
+#          - arch: amd64
+#            os: windows-2025
 #          - arch: arm64
 #            os: windows-11-arm
 

@@ -2,33 +2,24 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.0-M3</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
+
     <groupId>id.my.agungdh</groupId>
     <artifactId>demo</artifactId>
     <version>0.0.2</version>
     <name>demo</name>
     <description>demo</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
+
     <properties>
         <java.version>25</java.version>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -41,11 +32,13 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -55,6 +48,7 @@
 
     <build>
         <plugins>
+            <!-- Compiler + Lombok AP -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -67,10 +61,14 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
+            <!-- GraalVM Native buildtools (konfigurasi dasar, tanpa buildArgs) -->
             <plugin>
                 <groupId>org.graalvm.buildtools</groupId>
                 <artifactId>native-maven-plugin</artifactId>
             </plugin>
+
+            <!-- Spring Boot plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -86,4 +84,41 @@
         </plugins>
     </build>
 
+    <!-- Profiles arsitektur -->
+    <profiles>
+        <!-- x86_64: tambahkan -march=x86-64-v2 -->
+        <profile>
+            <id>native-x86</id>
+            <activation>
+                <property>
+                    <name>arch</name>
+                    <value>amd64</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <buildArgs>
+                                <buildArg>-march=x86-64-v2</buildArg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- arm64: default, tanpa buildArgs tambahan -->
+        <profile>
+            <id>native-arm</id>
+            <activation>
+                <property>
+                    <name>arch</name>
+                    <value>arm64</value>
+                </property>
+            </activation>
+        </profile>
+    </profiles>
 </project>

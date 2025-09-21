@@ -14,20 +14,21 @@ jobs:
   build:
     strategy:
       matrix:
-        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm64
 
-    # Konsisten 24.04 untuk kedua arsitektur
-    runs-on: ubuntu-24.04-${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
 
     steps:
-      # Checkout ke tag release saat event release published
       - name: Checkout (release tag)
         if: github.event_name == 'release'
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.release.tag_name }}
 
-      # Checkout default untuk push ke master / manual
       - name: Checkout (branch)
         if: github.event_name != 'release'
         uses: actions/checkout@v4
@@ -43,7 +44,6 @@ jobs:
         run: |
           set -e
           chmod +x mvnw
-          # Propagasi arsitektur ke Maven profiles (pom.xml)
           ./mvnw -Pnative -DskipTests -Darch=${{ matrix.arch }} native:compile
 
       - name: Package artifact (zip)
@@ -62,7 +62,6 @@ jobs:
 
           APPNAME=$(basename "$BINPATH")
 
-          # Suffix: tag saat release, atau run_id saat push/master
           if [[ "${GITHUB_EVENT_NAME}" == "release" ]]; then
             SUFFIX="${{ github.event.release.tag_name }}"
           else
@@ -79,7 +78,6 @@ jobs:
           echo "zip=${ZIPNAME}" >> "$GITHUB_OUTPUT"
           echo "checksum=${ZIPNAME}.sha256" >> "$GITHUB_OUTPUT"
 
-      # Simpan di Actions artifacts
       - name: Upload artifact (Actions tab)
         uses: actions/upload-artifact@v4
         with:
@@ -90,7 +88,6 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      # Saat release published, upload juga ke halaman Release (per-arch)
       - name: Upload assets to Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2

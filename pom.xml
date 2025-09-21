@@ -84,7 +84,6 @@
         </plugins>
     </build>
 
-    <!-- Profiles arsitektur -->
     <profiles>
         <!-- x86_64: tambahkan -march=x86-64-v2 -->
         <profile>
@@ -110,7 +109,7 @@
             </build>
         </profile>
 
-        <!-- arm64: default, tanpa buildArgs tambahan -->
+        <!-- arm64: target armv8-a -->
         <profile>
             <id>native-arm</id>
             <activation>
@@ -119,6 +118,19 @@
                     <value>arm64</value>
                 </property>
             </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <buildArgs>
+                                <buildArg>-march=armv8-a</buildArg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 </project>

@@ -1,4 +1,4 @@
-name: Build Jar (Maven) & Upload (Actions + Release)
+name: Build Nativa (GraalVM) & Upload (Actions + Release)
 
 on:
   push:
